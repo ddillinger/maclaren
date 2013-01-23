@@ -1,7 +1,10 @@
 (ns maclaren.core
   (:require [clojure.java.io :refer [copy file input-stream output-stream]]
             [clojure.java.shell :as shell]
-            [maclaren.utils :refer :all])
+            [maclaren.utils :refer :all]
+            [maclaren.upload :as upload]
+            [maclaren.download :as download]
+            )
   (:import (java.util UUID)
            (java.util.zip GZIPInputStream GZIPOutputStream)
            (org.apache.commons.compress.archivers.tar TarArchiveInputStream
@@ -70,15 +73,22 @@
     (create-tar-archive out-path folder-path)))
 
 (defn freeze
-  [arch-name folder-path & [tmpdir]]
-  (let [archive-name (str arch-name ".tar.gz")
+  [index-name folder-path & [tmpdir]]
+  (let [archive-name (str index-name ".tar.gz")
         out-path (str (if (and tmpdir (path-exists? tmpdir))
                         tmpdir
                         (System/getProperty "java.io.tmpdir"))
-                      "/" archive-name)]
-    (create-tar-archive out-path folder-path)))
+                      "/" archive-name)
+        archive (create-tar-archive out-path folder-path)]
+    (upload/upload-file index-name archive)
+    (.delete (file archive))))
 
 (defn thaw
-  "Given an archive-name, expands to expand-path."
-  [archive-name expand-path]
-  (unpack-archive archive-name expand-path))
+  "Given an s3 url, expands to expand-path."
+  [index-name expand-path]
+  (doseq [x (reverse (file-seq (file expand-path)))]
+    (.delete x))
+  (let [local-file (download/download-file index-name)
+        result (unpack-archive local-file expand-path)]
+    (.delete local-file)
+    result))

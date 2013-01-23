@@ -47,9 +47,9 @@
       (cons [start se]
             (sections (inc se) end size))))))
 
-(defn upload-file [f]
+(defn upload-file [index-name f]
   (let [f (io/file f)
-        object-name (str (.getName f) "/es-index")
+        object-name (str index-name "/es-index")
         aws {:aws-key (c/config :aws-key)
              :aws-secret-key (c/config :aws-secret-key)}
         bucket (c/config :aws-bucket)]
@@ -70,5 +70,5 @@
           (doall parts)
           (s3/end-multipart aws mp bucket object-name (sort-by :part parts))))
       (with-open [s (io/input-stream f)]
-        (s3/write-stream aws bucket object-name s :length (.length f)))))
-  true)
+        (s3/write-stream aws bucket object-name s :length (.length f))))
+    f))
