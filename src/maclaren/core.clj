@@ -41,25 +41,27 @@
 (defn unpack-archive
   "Given a .tar.gz unpack it to out-path."
   [tar-file out-path]
-  (when-not (.exists tar-file)
-    (throw
-     (Exception. (format "Uh, '%s' isn't actually there?" tar-file))))
-  (when-not (.exists out-path)
-    (throw
-     (Exception.
-      (format "That output path '%s' doesn't seem to be there." out-path))))
-  (let [tis (TarArchiveInputStream.
-             (GZIPInputStream.
-              (input-stream tar-file)))]
-    (doseq [entry (tar-gz-seq tis)]
-      (let [out-file (file (str out-path "/" (.getName entry)))]
-        (.mkdirs (.getParentFile out-file))
-        (with-open [outf (output-stream out-file)]
-          (let [bytes (byte-array 32768)]
-            (loop [nread (.read tis bytes 0 32768)]
-              (when (> nread -1)
-                (.write outf bytes 0 nread)
-                (recur (.read tis bytes 0 32768))))))))))
+  (let [tar-file (file tar-file)
+        out-path (file out-path)]
+    (when-not (.exists tar-file)
+      (throw
+       (Exception. (format "Uh, '%s' isn't actually there?" tar-file))))
+    (when-not (.exists out-path)
+      (throw
+       (Exception.
+        (format "That output path '%s' doesn't seem to be there." out-path))))
+    (let [tis (TarArchiveInputStream.
+               (GZIPInputStream.
+                (input-stream tar-file)))]
+      (doseq [entry (tar-gz-seq tis)]
+        (let [out-file (file (str out-path "/" (.getName entry)))]
+          (.mkdirs (.getParentFile out-file))
+          (with-open [outf (output-stream out-file)]
+            (let [bytes (byte-array 32768)]
+              (loop [nread (.read tis bytes 0 32768)]
+                (when (> nread -1)
+                  (.write outf bytes 0 nread)
+                  (recur (.read tis bytes 0 32768)))))))))))
 
 (defn create-archive
   "Given a folder, makes an archive file for it. Returns
