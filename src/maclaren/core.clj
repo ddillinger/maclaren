@@ -43,6 +43,7 @@
   [tar-file out-path]
   (let [tar-file (file tar-file)
         out-path (file out-path)]
+    (.mkdirs out-path)
     (when-not (.exists tar-file)
       (throw
        (Exception. (format "Uh, '%s' isn't actually there?" tar-file))))
