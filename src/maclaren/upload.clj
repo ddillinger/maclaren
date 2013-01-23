@@ -3,7 +3,7 @@
             [propS3t.core :as s3]
             [clojure.java.io :as io]))
 
-(def max-size (* 1024 1024 20))
+(def max-size (* 1024 1024 200))
 
 ;; from utils
 (defn limited-inputstream [^java.io.InputStream ins start length]
