@@ -1,7 +1,8 @@
 (ns maclaren.test.core
   (:require [clojure.test :refer :all]
             [clojure.java.io :as io]
-            [maclaren.core :refer :all])
+            [maclaren.core :refer :all]
+            [maclaren.utils :refer [rm-r]])
   (:import (java.util UUID)
            (java.util.zip GZIPInputStream)
            (org.apache.commons.compress.archivers.tar TarArchiveInputStream)))
@@ -10,11 +11,8 @@
   ;; Delete anything left over by previous runs. We do this at the
   ;; beginning, instead of the end, so if something fails it leaves
   ;; behind what it did for you to look at.
-    (fn [t]
-    (doseq [f (reverse
-               (file-seq (io/file (str (System/getProperty "java.io.tmpdir")
-                                       "/maclaren-test/"))))]
-      (.delete f))
+  (fn [t]
+    (rm-r (str (System/getProperty "java.io.tmpdir") "/maclaren-test/"))
     (t)))
 
 (deftest test-create-tarball

@@ -10,3 +10,9 @@
 
 (defn path-exists? [p]
   (.exists (file p)))
+
+(defn rm-r
+  "recursively delete a path tree"
+  [p]
+  (doseq [f (reverse (file-seq (file p)))]
+    (.delete f)))
