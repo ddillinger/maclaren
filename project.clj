@@ -1,4 +1,4 @@
-(defproject maclaren "1.0.0-SNAPSHOT"
+(defproject maclaren "0.0.1"
   :description "clojure utils for working with tar archives"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
