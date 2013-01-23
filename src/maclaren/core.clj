@@ -92,6 +92,6 @@
   (doseq [x (reverse (file-seq (file expand-path)))]
     (.delete x))
   (let [local-file (download/download-file index-name)
-        result (unpack-archive local-file expand-path)]
+        result (unpack-archive local-file (.getParent (file expand-path)))]
     (.delete local-file)
     result))
