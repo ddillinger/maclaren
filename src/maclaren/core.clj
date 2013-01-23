@@ -68,3 +68,17 @@
                         (System/getProperty "java.io.tmpdir"))
                       "/" archive-name)]
     (create-tar-archive out-path folder-path)))
+
+(defn freeze
+  [arch-name folder-path & [tmpdir]]
+  (let [archive-name (str arch-name ".tar.gz")
+        out-path (str (if (and tmpdir (path-exists? tmpdir))
+                        tmpdir
+                        (System/getProperty "java.io.tmpdir"))
+                      "/" archive-name)]
+    (create-tar-archive out-path folder-path)))
+
+(defn thaw
+  "Given an archive-name, expands to expand-path."
+  [archive-name expand-path]
+  (unpack-archive archive-name expand-path))
