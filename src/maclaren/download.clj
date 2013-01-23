@@ -19,9 +19,9 @@
 (defn download-file [f]
   (let [f (io/file f)
         object-name (str (.getName f) "/es-index")
-        aws {:aws-key (c/config :aws-key)
-             :aws-secret-key (c/config :aws-secret-key)}
-        bucket (c/config :aws-bucket)
+        aws {:aws-key (c/config :maclaren/aws-key)
+             :aws-secret-key (c/config :maclaren/aws-secret-key)}
+        bucket (c/config :maclaren/aws-bucket)
         f (java.io.File/createTempFile "index" "tgz")]
     (with-open [o (s3/read-stream aws bucket object-name)]
       (io/copy o f))

@@ -50,9 +50,9 @@
 (defn upload-file [index-name f]
   (let [f (io/file f)
         object-name (str index-name "/es-index")
-        aws {:aws-key (c/config :aws-key)
-             :aws-secret-key (c/config :aws-secret-key)}
-        bucket (c/config :aws-bucket)]
+        aws {:aws-key (c/config :maclaren/aws-key)
+             :aws-secret-key (c/config :maclaren/aws-secret-key)}
+        bucket (c/config :maclaren/aws-bucket)]
     (if (> (.length f) max-size)
       (let [exec (java.util.concurrent.Executors/newCachedThreadPool)
             service (java.util.concurrent.ExecutorCompletionService. exec)
